@@ -1,0 +1,6 @@
+{
+  "name": "ToolsOra",
+  "description": "ToolsOra is an all-in-one Social Media Creator Toolkit for YouTubers, Instagram creators, TikTok creators, influencers, marketers, bloggers, and social media managers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
