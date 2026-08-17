@@ -5,6 +5,7 @@ import { GoogleGenAI } from "@google/genai";
 import { createServer as createViteServer } from "vite";
 import * as dotenv from "dotenv";
 import { getRouteSEO } from "./src/seo/routeSeo";
+import { getStructuredData } from "./src/seo/structuredData";
 
 dotenv.config();
 
@@ -90,9 +91,11 @@ function escapeHtml(value: string) {
 
 function renderRouteSEO(html: string, pathname: string) {
   const seo = getRouteSEO(pathname);
+  const structuredData = getStructuredData(pathname);
   const title = escapeHtml(seo.title);
   const description = escapeHtml(seo.description);
   const canonical = escapeHtml(seo.canonical);
+  const jsonLd = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 
   return html
     .replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`)
@@ -102,7 +105,9 @@ function renderRouteSEO(html: string, pathname: string) {
     .replace(/<meta property="og:url" content="[^"]*"\s*\/>/i, `<meta property="og:url" content="${canonical}" />`)
     .replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/i, `<meta name="twitter:title" content="${title}" />`)
     .replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/i, `<meta name="twitter:description" content="${description}" />`)
-    .replace(/<link rel="canonical" href="[^"]*"\s*\/>/i, `<link rel="canonical" href="${canonical}" />`);
+    .replace(/<link rel="canonical" href="[^"]*"\s*\/>/i, `<link rel="canonical" href="${canonical}" />`)
+    .replace(/<script id="toolsora-structured-data" type="application\/ld\+json">[\s\S]*?<\/script>/i, "")
+    .replace(/<\/head>/i, `<script id="toolsora-structured-data" type="application/ld+json">${jsonLd}</script></head>`);
 }
 
 async function startServer() {
