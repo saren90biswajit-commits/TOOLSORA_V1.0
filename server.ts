@@ -1,8 +1,10 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { GoogleGenAI } from "@google/genai";
 import { createServer as createViteServer } from "vite";
 import * as dotenv from "dotenv";
+import { getRouteSEO } from "./src/seo/routeSeo";
 
 dotenv.config();
 
@@ -30,8 +32,7 @@ app.post("/api/generate", async (req, res) => {
     const { toolType, payload } = req.body;
     const aiClient = getAI();
     let prompt = "";
-    
-    // Construct prompt based on toolType
+
     switch (toolType) {
       case "youtube-titles":
         prompt = `Generate ${payload.count || 5} catchy YouTube titles for a video about "${payload.topic}". Target audience: ${payload.audience}. Category: ${payload.category}. Tone: ${payload.tone}. Include keyword: "${payload.keyword}". Respond with ONLY a valid JSON array of objects, where each object has a "title" string field, a "curiosity" score (1-10), an "emotionalAppeal" score (1-10), and a brief "improvement" suggestion. No markdown formatting, just raw JSON.`;
@@ -67,22 +68,42 @@ app.post("/api/generate", async (req, res) => {
     const response = await aiClient.models.generateContent({
       model: "gemini-3.7-flash",
       contents: prompt,
-      config: {
-        responseMimeType: "application/json"
-      }
+      config: { responseMimeType: "application/json" }
     });
 
-    if (!response.text) {
-      throw new Error("Empty response from AI");
-    }
-
-    const jsonResult = JSON.parse(response.text);
-    res.json(jsonResult);
+    if (!response.text) throw new Error("Empty response from AI");
+    res.json(JSON.parse(response.text));
   } catch (error: any) {
     console.error("AI Generation Error:", error);
     res.status(500).json({ error: error.message || "Failed to generate content" });
   }
 });
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderRouteSEO(html: string, pathname: string) {
+  const seo = getRouteSEO(pathname);
+  const title = escapeHtml(seo.title);
+  const description = escapeHtml(seo.description);
+  const canonical = escapeHtml(seo.canonical);
+
+  return html
+    .replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`)
+    .replace(/<meta name="description" content="[^"]*"\s*\/>/i, `<meta name="description" content="${description}" />`)
+    .replace(/<meta property="og:title" content="[^"]*"\s*\/>/i, `<meta property="og:title" content="${title}" />`)
+    .replace(/<meta property="og:description" content="[^"]*"\s*\/>/i, `<meta property="og:description" content="${description}" />`)
+    .replace(/<meta property="og:url" content="[^"]*"\s*\/>/i, `<meta property="og:url" content="${canonical}" />`)
+    .replace(/<meta name="twitter:title" content="[^"]*"\s*\/>/i, `<meta name="twitter:title" content="${title}" />`)
+    .replace(/<meta name="twitter:description" content="[^"]*"\s*\/>/i, `<meta name="twitter:description" content="${description}" />`)
+    .replace(/<link rel="canonical" href="[^"]*"\s*\/>/i, `<link rel="canonical" href="${canonical}" />`);
+}
 
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
@@ -93,9 +114,12 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
+    const indexPath = path.join(distPath, "index.html");
+    const indexHtml = fs.readFileSync(indexPath, "utf-8");
+
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
+      res.type("html").send(renderRouteSEO(indexHtml, req.path));
     });
   }
 
