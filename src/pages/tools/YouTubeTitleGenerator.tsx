@@ -208,9 +208,6 @@ export function YouTubeTitleGenerator() {
                       {copiedIndex === index ? <Check className="h-4 w-4 mr-2 text-green-600" /> : <Copy className="h-4 w-4 mr-2" />}
                       {copiedIndex === index ? "Copied!" : "Copy"}
                     </Button>
-                    <Button variant="outline" size="sm" className="text-slate-600">
-                      <RefreshCw className="h-4 w-4 mr-2" /> Regenerate
-                    </Button>
                     <Button variant="ghost" size="sm" className="text-amber-500 hover:text-amber-600 hover:bg-amber-50 ml-auto">
                       <Star className="h-4 w-4" />
                     </Button>

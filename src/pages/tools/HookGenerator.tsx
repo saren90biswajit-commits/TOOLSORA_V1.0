@@ -185,9 +185,6 @@ export function HookGenerator() {
                       {copiedIndex === index ? <Check className="h-4 w-4 mr-2 text-green-600" /> : <Copy className="h-4 w-4 mr-2" />}
                       {copiedIndex === index ? "Copied!" : "Copy Hook"}
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-slate-500 hover:text-indigo-600">
-                      <RefreshCw className="h-4 w-4 mr-2" /> Regenerate
-                    </Button>
                   </div>
                 </div>
               </CardContent>
