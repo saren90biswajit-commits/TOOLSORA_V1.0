@@ -8,7 +8,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ComingSoon } from "./components/layout/ComingSoon";
-import { SEO } from "./components/SEO";
 
 // Use React.lazy for route optimization
 const Home = React.lazy(() => import("./pages/Home").then(module => ({ default: module.Home })));
@@ -51,7 +50,6 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <SEO />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<AppLayout />}>

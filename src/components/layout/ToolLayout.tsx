@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
 interface ToolLayoutProps {
@@ -10,92 +9,7 @@ interface ToolLayoutProps {
   children?: ReactNode;
 }
 
-const RELATED_TOOLS: Record<string, { href: string; label: string }[]> = {
-  "/youtube-tools/title-generator": [
-    { href: "/youtube-tools/script-generator", label: "YouTube Script Generator" },
-    { href: "/youtube-tools/retention-hooks", label: "YouTube Hook Generator" },
-    { href: "/tools/thumbnail-downloader", label: "YouTube Thumbnail Downloader" },
-  ],
-  "/youtube-tools/script-generator": [
-    { href: "/youtube-tools/title-generator", label: "YouTube Title Generator" },
-    { href: "/youtube-tools/retention-hooks", label: "YouTube Hook Generator" },
-    { href: "/tools/thumbnail-downloader", label: "YouTube Thumbnail Downloader" },
-  ],
-  "/youtube-tools/retention-hooks": [
-    { href: "/youtube-tools/title-generator", label: "YouTube Title Generator" },
-    { href: "/youtube-tools/script-generator", label: "YouTube Script Generator" },
-  ],
-  "/instagram-tools/reel-caption-generator": [
-    { href: "/instagram-tools/hashtag-generator", label: "Instagram Hashtag Generator" },
-    { href: "/instagram-tools/bio-generator", label: "Instagram Bio Generator" },
-    { href: "/tiktok-tools/content-ideas", label: "TikTok Content Ideas" },
-  ],
-  "/instagram-tools/hashtag-generator": [
-    { href: "/instagram-tools/reel-caption-generator", label: "Instagram Reel Caption Generator" },
-    { href: "/instagram-tools/bio-generator", label: "Instagram Bio Generator" },
-    { href: "/tiktok-tools/hashtag-generator", label: "TikTok Hashtag Generator" },
-  ],
-  "/instagram-tools/bio-generator": [
-    { href: "/instagram-tools/reel-caption-generator", label: "Instagram Reel Caption Generator" },
-    { href: "/instagram-tools/hashtag-generator", label: "Instagram Hashtag Generator" },
-  ],
-  "/tiktok-tools/viral-hooks": [
-    { href: "/tiktok-tools/hashtag-generator", label: "TikTok Hashtag Generator" },
-    { href: "/tiktok-tools/content-ideas", label: "TikTok Content Ideas" },
-    { href: "/youtube-tools/retention-hooks", label: "YouTube Hook Generator" },
-  ],
-  "/tiktok-tools/hashtag-generator": [
-    { href: "/tiktok-tools/viral-hooks", label: "TikTok Hook Generator" },
-    { href: "/tiktok-tools/content-ideas", label: "TikTok Content Ideas" },
-    { href: "/instagram-tools/hashtag-generator", label: "Instagram Hashtag Generator" },
-  ],
-  "/tiktok-tools/content-ideas": [
-    { href: "/tiktok-tools/viral-hooks", label: "TikTok Hook Generator" },
-    { href: "/tiktok-tools/hashtag-generator", label: "TikTok Hashtag Generator" },
-  ],
-  "/facebook-tools/post-caption-generator": [
-    { href: "/facebook-tools/group-hooks", label: "Facebook Group Hook Generator" },
-    { href: "/facebook-tools/page-bio-generator", label: "Facebook Page Bio Generator" },
-    { href: "/instagram-tools/reel-caption-generator", label: "Instagram Reel Caption Generator" },
-  ],
-  "/facebook-tools/group-hooks": [
-    { href: "/facebook-tools/post-caption-generator", label: "Facebook Post Caption Generator" },
-    { href: "/facebook-tools/page-bio-generator", label: "Facebook Page Bio Generator" },
-  ],
-  "/facebook-tools/page-bio-generator": [
-    { href: "/facebook-tools/post-caption-generator", label: "Facebook Post Caption Generator" },
-    { href: "/facebook-tools/group-hooks", label: "Facebook Group Hook Generator" },
-  ],
-  "/tools/thumbnail-downloader": [
-    { href: "/youtube-tools/title-generator", label: "YouTube Title Generator" },
-    { href: "/youtube-tools/script-generator", label: "YouTube Script Generator" },
-    { href: "/tools", label: "All Creator Tools" },
-  ],
-  "/tools/emoji-picker": [
-    { href: "/tools/font-generator", label: "Font Generator" },
-    { href: "/tools/color-palette-generator", label: "Color Palette Generator" },
-    { href: "/tools", label: "All Creator Tools" },
-  ],
-  "/tools/font-generator": [
-    { href: "/tools/emoji-picker", label: "Emoji Picker" },
-    { href: "/tools/color-palette-generator", label: "Color Palette Generator" },
-    { href: "/tools", label: "All Creator Tools" },
-  ],
-  "/tools/color-palette-generator": [
-    { href: "/tools/font-generator", label: "Font Generator" },
-    { href: "/tools/emoji-picker", label: "Emoji Picker" },
-    { href: "/tools", label: "All Creator Tools" },
-  ],
-  "/tools/performance-audit": [
-    { href: "/tools", label: "All Creator Tools" },
-    { href: "/tools/color-palette-generator", label: "Color Palette Generator" },
-  ],
-};
-
 export function ToolLayout({ title, description, inputs, results, children }: ToolLayoutProps) {
-  const location = useLocation();
-  const relatedTools = RELATED_TOOLS[location.pathname] || [{ href: "/tools", label: "Explore All Creator Tools" }];
-
   return (
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
@@ -123,21 +37,6 @@ export function ToolLayout({ title, description, inputs, results, children }: To
           </div>
         </div>
       )}
-
-      <nav aria-label="Related creator tools" className="mt-14 border-t border-slate-200 pt-8">
-        <h2 className="text-lg font-bold text-slate-900 mb-4">Related Creator Tools</h2>
-        <div className="flex flex-wrap gap-3">
-          {relatedTools.map((tool) => (
-            <Link
-              key={tool.href}
-              to={tool.href}
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-indigo-300 hover:text-indigo-700 hover:bg-indigo-50 transition-colors"
-            >
-              {tool.label}
-            </Link>
-          ))}
-        </div>
-      </nav>
     </motion.div>
   );
 }
